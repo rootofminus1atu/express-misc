@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Downscaler</title>
+</head>
+<body>
+    <h1>Video Downscaler</h1>
+
+    <form id="uploadForm" enctype="multipart/form-data">
+        <input type="file" name="video" accept="video/*">
+        <button type="submit">Downscale Video</button>
+    </form>
+
+    <video id="outputVideo" controls style="max-width: 100%;"></video>
+
+    <script>
+        const uploadForm = document.getElementById('uploadForm');
+        const outputVideo = document.getElementById('outputVideo');
+
+        uploadForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(uploadForm);
+
+            try {
+                const response = await fetch('/downscale', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (response.ok) {
+                    const blob = await response.blob();
+                    outputVideo.src = URL.createObjectURL(blob);
+                    outputVideo.play();
+                } else {
+                    console.error('Error:', response.statusText);
+                }
+            } catch (error) {
+                console.error('Fetch error:', error);
+            }
+        });
+    </script>
+</body>
+</html>
